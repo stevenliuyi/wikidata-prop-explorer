@@ -7,6 +7,7 @@ import * as WikidataAPI from '../utils/api'
 import PropTree from './PropTree'
 import PropTable from './PropTable'
 import TopNavBar from './TopNavBar'
+import ReactGA from 'react-ga'
 
 class App extends Component {
   state = {
@@ -117,6 +118,12 @@ class App extends Component {
           this.getPropList(data.results.bindings)
         })
     }
+  }
+
+  componentDidMount() {
+    // Google Analytics
+    ReactGA.initialize('UA-117183010-1')
+    ReactGA.pageview(window.location.pathname + window.location.search)
   }
 
   render() {
