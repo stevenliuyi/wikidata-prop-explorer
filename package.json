@@ -1,0 +1,38 @@
+{
+  "name": "wikidata-prop-explorer",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "bootstrap": "3",
+    "react": "^16.3.1",
+    "react-bootstrap": "^0.32.1",
+    "react-dom": "^16.3.1",
+    "react-scripts": "1.1.4",
+    "react-table": "^6.8.0",
+    "react-treebeard": "^2.1.0"
+  },
+ "scripts": {
+    "predeploy": "yarn run build",
+    "deploy": "gh-pages -d build",
+    "start": "react-scripts start",
+    "build": "PUBLIC_URL=/wikidata-prop-explorer react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "prepare": "patch-package",
+    "deploy-ghpages": "./node_modules/.bin/gh-pages -d build -b gh-pages -r https://$GITHUB_TOKEN@github.com/stevenliuyi/wikidata-prop-explorer.git",
+    "build-wmflabs": "PUBLIC_URL=/prop-explorer react-scripts build", 
+    "deploy-wmflabs": "./node_modules/.bin/gh-pages -d build -b wmflabs -r https://$GITHUB_TOKEN@github.com/stevenliuyi/wikidata-prop-explorer.git -s '{**/*,.travis.yml}'"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-config-react-app": "^2.1.0",
+    "eslint-plugin-flowtype": "^2.46.1",
+    "eslint-plugin-import": "^2.10.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-prettier": "^2.6.0",
+    "eslint-plugin-react": "^7.7.0",
+    "gh-pages": "^1.1.0",
+    "prettier": "^1.11.1"
+  }
+}
