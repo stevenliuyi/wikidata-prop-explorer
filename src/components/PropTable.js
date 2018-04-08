@@ -36,7 +36,8 @@ class PropTable extends Component {
                   </a>
                 </div>
               ),
-              sortMethod: this.idSortMethod
+              sortMethod: this.idSortMethod,
+              width: 100
             },
             {
               Header: 'Label',

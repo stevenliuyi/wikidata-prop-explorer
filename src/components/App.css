@@ -123,3 +123,8 @@ input[type="text"]:focus {
 .prop-toggle.react-toggle--checked .react-toggle-thumb {
   border-color: #337ab7;
 }
+
+.app-name {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+}

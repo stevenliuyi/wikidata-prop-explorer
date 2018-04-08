@@ -2,10 +2,11 @@ import React, { Component } from 'react'
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap/dist/css/bootstrap-theme.css'
-import { Grid, Row, Col, PageHeader } from 'react-bootstrap'
+import { Grid, Row, Col } from 'react-bootstrap'
 import * as WikidataAPI from '../utils/api'
 import PropTree from './PropTree'
 import PropTable from './PropTable'
+import TopNavBar from './TopNavBar'
 
 class App extends Component {
   state = {
@@ -122,8 +123,8 @@ class App extends Component {
     return (
       <div className="site">
         <div className="site-content">
+          <TopNavBar />
           <Grid>
-            <PageHeader>Wikidata Property Explorer</PageHeader>
             <Row>
               <Col sm={4}>
                 <PropTree
