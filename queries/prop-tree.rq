@@ -14,4 +14,4 @@ WHERE
   OPTIONAL { ?prop rdfs:label ?name .
              FILTER( LANG(?name) = "en" ) . }
 }
-ORDER BY ?depth
+ORDER BY ?depth ?name
