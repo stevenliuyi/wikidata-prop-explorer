@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import ReactTable from 'react-table'
 import 'react-table/react-table.css'
+import ScrollToTop from 'react-scroll-up'
+import MdArrowUpward from 'react-icons/lib/md/arrow-upward'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 class PropTable extends Component {
   state = {
@@ -73,6 +76,14 @@ class PropTable extends Component {
               : 'No properties found'
           }
         />
+        <ScrollToTop showUnder={100}>
+          <OverlayTrigger
+            placement="left"
+            overlay={<Tooltip id="back-to-top">back to top</Tooltip>}
+          >
+            <MdArrowUpward size={35} className="text-muted" />
+          </OverlayTrigger>
+        </ScrollToTop>
       </div>
     )
   }

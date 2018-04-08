@@ -61,7 +61,7 @@ class PropTree extends Component {
         <div className="clearfix" style={{ marginBottom: '5px' }}>
           <div className="pull-right">
             <span style={{ marginRight: '5px', fontSize: '8pt' }}>
-              Show properties of sub-branches
+              Show properties in sub-branches
             </span>
             <Toggle
               checked={this.props.toggleChecked}
@@ -70,11 +70,13 @@ class PropTree extends Component {
             />
           </div>
         </div>
-        <Treebeard
-          data={this.state.tree}
-          onToggle={this.onToggle}
-          style={treeStyle}
-        />
+        <div style={{ height: 'calc(100vh - 250px)', overflow: 'auto' }}>
+          <Treebeard
+            data={this.state.tree}
+            onToggle={this.onToggle}
+            style={treeStyle}
+          />
+        </div>
       </div>
     )
   }
