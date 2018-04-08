@@ -3,12 +3,25 @@ import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 
 class PropTable extends Component {
+  state = {
+    filtered: []
+  }
+
+  idSortMethod = (a, b, desc) => {
+    const aValue = parseInt(a.substr(1), 10)
+    const bValue = parseInt(b.substr(1), 10)
+    if (aValue > bValue) return 1
+    if (aValue < bValue) return -1
+    return 0
+  }
+
   render() {
     return (
       <div id="prop-table">
         <ReactTable
           data={this.props.propList}
           filterable
+          filtered={this.state.filtered}
           columns={[
             {
               Header: 'ID',
@@ -22,7 +35,8 @@ class PropTable extends Component {
                     {row.value}
                   </a>
                 </div>
-              )
+              ),
+              sortMethod: this.idSortMethod
             },
             {
               Header: 'Label',
@@ -51,7 +65,12 @@ class PropTable extends Component {
             const filterValue = filter.value.toLowerCase()
             return value.includes(filterValue)
           }}
-          noDataText="Select from the tree to show properties"
+          onFilteredChange={filtered => this.setState({ filtered })}
+          noDataText={
+            this.state.filtered.length === 0
+              ? 'Select from the tree to show properties'
+              : 'No properties found'
+          }
         />
       </div>
     )
