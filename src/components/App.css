@@ -1,4 +1,4 @@
-.App {
+App {
   text-align: center;
 }
 
@@ -54,10 +54,10 @@
   padding-bottom: 20px;
 }
 
-#prop-table input[type="text"]:focus {
+input[type="text"]:focus {
   border-color: #337ab7 !important;
   -webkit-appearance: none;
-  box-shadow: 0 0 0 1px #337ab7;
+  box-shadow: 0 0 0 1px #337ab7 !important;
 }
 
 .ReactTable {
@@ -93,9 +93,11 @@
   border-right: none !important;
 }
 
-/* fix display issue on iOS */
-input[type="text"] {
-  -webkit-appearance: none;
-}
-
 .rt-th { outline: none; }
+
+.form-control {
+  border: 1px solid rgba(0,0,0,0.1) !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  outline: none !important;
+}
