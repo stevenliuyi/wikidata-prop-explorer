@@ -11,7 +11,8 @@ class App extends Component {
   state = {
     propTree: {},
     propList: [],
-    currentPropId: ''
+    currentPropId: '',
+    toggleChecked: true
   }
 
   addPropToTree = (tree, propId, propName, parentId) => {
@@ -64,6 +65,10 @@ class App extends Component {
     this.setState({ propList })
   }
 
+  handleToggleChange = event => {
+    this.setState({ toggleChecked: event.target.checked })
+  }
+
   componentWillMount() {
     const propTreeQueryFilename =
       process.env.NODE_ENV === 'development'
@@ -82,7 +87,10 @@ class App extends Component {
   }
 
   componentWillUpdate(nextProps, nextState) {
-    if (nextState.currentPropId !== this.state.currentPropId) {
+    if (
+      nextState.currentPropId !== this.state.currentPropId ||
+      nextState.toggleChecked !== this.state.toggleChecked
+    ) {
       const propListQueryFilename =
         process.env.NODE_ENV === 'development'
           ? `/queries/prop-template.rq`
@@ -90,9 +98,16 @@ class App extends Component {
 
       fetch(propListQueryFilename)
         .then(res => res.text())
-        .then(query_template =>
-          query_template.replace(/CLASS_ID/, nextState.currentPropId)
-        )
+        .then(query_template => {
+          let query = query_template.replace(
+            /CLASS_ID/,
+            nextState.currentPropId
+          )
+          // don't show properties of sub-branches
+          if (!nextState.toggleChecked)
+            query = query.replace(/\/wdt:P279\*/, '')
+          return query
+        })
         .then(query =>
           WikidataAPI.fetchSPARQLResult(`query=${encodeURIComponent(query)}`)
         )
@@ -114,6 +129,8 @@ class App extends Component {
                 <PropTree
                   tree={this.state.propTree}
                   onChange={newId => this.setState({ currentPropId: newId })}
+                  toggleChecked={this.state.toggleChecked}
+                  handleToggleChange={this.handleToggleChange}
                 />
               </Col>
               <Col sm={8}>

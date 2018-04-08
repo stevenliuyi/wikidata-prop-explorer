@@ -101,3 +101,25 @@ input[type="text"]:focus {
   -webkit-box-shadow: none !important;
   outline: none !important;
 }
+
+.react-toggle {
+  vertical-align: middle;
+}
+
+.clearfix::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.prop-toggle.react-toggle--checked .react-toggle-track {
+  background-color: #337ab7;
+}
+
+.prop-toggle.react-toggle--checked:hover:not(.react-toggle-disabled) .react-toggle-track {
+  background-color: #337ab7 !important;
+}
+
+.prop-toggle.react-toggle--checked .react-toggle-thumb {
+  border-color: #337ab7;
+}

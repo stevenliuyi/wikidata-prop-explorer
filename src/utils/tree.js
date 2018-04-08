@@ -6,8 +6,7 @@ export default {
       margin: 0,
       padding: 0,
       color: '#9DA5AB',
-      fontFamily: 'lucida grande ,tahoma,verdana,arial,sans-serif',
-      fontSize: '12px'
+      fontSize: '10pt'
     },
     node: {
       base: {

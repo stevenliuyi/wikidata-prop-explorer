@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { Treebeard } from 'react-treebeard'
 import { FormControl } from 'react-bootstrap'
+import Toggle from 'react-toggle'
+import 'react-toggle/style.css'
 import treeStyle from '../utils/tree'
 import * as filters from '../utils/filter'
 
@@ -55,6 +57,18 @@ class PropTree extends Component {
             placeholder="Search the tree..."
             onChange={this.onFilterChange}
           />
+        </div>
+        <div className="clearfix" style={{ marginBottom: '5px' }}>
+          <div className="pull-right">
+            <span style={{ marginRight: '5px', fontSize: '8pt' }}>
+              Show properties of sub-branches
+            </span>
+            <Toggle
+              checked={this.props.toggleChecked}
+              onChange={this.props.handleToggleChange}
+              className="prop-toggle"
+            />
+          </div>
         </div>
         <Treebeard
           data={this.state.tree}
