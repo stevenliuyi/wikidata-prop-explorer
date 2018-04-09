@@ -46,3 +46,25 @@ export const expandFilteredNodes = (node, filter, matcher = defaultMatcher) => {
     toggled: shouldExpand
   })
 }
+
+// add class to highlight matched texts
+export const highlightMatchedTexts = (node, filter, re) => {
+  node.name =
+    node.name && filter !== ''
+      ? node.name.replace(
+          re,
+          match => `<span class="match-text">${match}</span>`
+        )
+      : node.name
+  let children = node.children
+  if (!children || children.length === 0) {
+    return Object.assign({}, node)
+  }
+
+  children = children.map(child => {
+    return highlightMatchedTexts(child, filter, re)
+  })
+  return Object.assign({}, node, {
+    children: children
+  })
+}

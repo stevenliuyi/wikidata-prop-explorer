@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Treebeard } from 'react-treebeard'
+import { Treebeard, decorators } from 'react-treebeard'
 import { FormControl } from 'react-bootstrap'
 import Toggle from 'react-toggle'
 import 'react-toggle/style.css'
@@ -9,12 +9,28 @@ import * as filters from '../utils/filter'
 class PropTree extends Component {
   state = {
     filterText: '',
-    tree: {}
+    tree: {},
+    decorators: {}
   }
 
   componentWillMount() {
     this.onToggle = this.onToggle.bind(this)
     this.onFilterChange = this.onFilterChange.bind(this)
+
+    decorators.Header = ({ style, node }) => {
+      return (
+        <div style={style.base}>
+          <div
+            style={style.title}
+            dangerouslySetInnerHTML={{
+              __html: node.name
+            }}
+          />
+        </div>
+      )
+    }
+
+    this.setState({ decorators })
   }
 
   componentWillReceiveProps(nextProps, nextState) {
@@ -43,10 +59,13 @@ class PropTree extends Component {
 
   onFilterChange(e) {
     const filterText = e.target.value
+    const filterRe = new RegExp(filterText, 'ig')
+
     if (!filterText) return this.setState({ tree: this.props.tree, filterText })
 
     let filtered = filters.filterTree(this.props.tree, filterText)
     filtered = filters.expandFilteredNodes(filtered, filterText)
+    filtered = filters.highlightMatchedTexts(filtered, filterText, filterRe)
     this.setState({ tree: filtered, filterText })
   }
 
@@ -78,6 +97,7 @@ class PropTree extends Component {
             data={this.state.tree}
             onToggle={this.onToggle}
             style={treeStyle}
+            decorators={this.state.decorators}
           />
         </div>
         <div className="text-muted pull-right" style={{ paddingTop: '3px' }}>

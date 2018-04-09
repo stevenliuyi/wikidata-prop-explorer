@@ -148,3 +148,8 @@ App {
 .uls-langcode {
   display: none;
 }
+
+.match-text {
+  color: #337ab7;
+  font-weight: bold; 
+}
