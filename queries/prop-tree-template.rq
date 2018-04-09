@@ -1,0 +1,17 @@
+SELECT ?prop ?name ?parent ?depth
+WHERE
+{
+  SERVICE gas:service {
+    gas:program gas:gasClass "com.bigdata.rdf.graph.analytics.SSSP" ;
+                gas:in wd:Q18616576 ;
+                gas:traversalDirection "Reverse" ;
+                gas:out ?prop ;
+                gas:out1 ?depth ;
+                gas:maxIterations 10 ;
+                gas:linkType wdt:P279 .
+  }
+  ?prop wdt:P279 ?parent .
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "LANG_CODE".
+                           ?prop rdfs:label ?name . }
+}
+ORDER BY ?depth ?name
