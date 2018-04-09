@@ -17,8 +17,11 @@ class PropTree extends Component {
     this.onFilterChange = this.onFilterChange.bind(this)
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (Object.keys(this.state.tree).length === 0)
+  componentWillReceiveProps(nextProps, nextState) {
+    if (
+      Object.keys(this.state.tree).length === 0 ||
+      nextProps.tree.name !== this.props.tree.name
+    )
       this.setState({ tree: nextProps.tree })
   }
 

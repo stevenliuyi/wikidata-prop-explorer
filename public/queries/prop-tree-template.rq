@@ -11,7 +11,7 @@ WHERE
                 gas:linkType wdt:P279 .
   }
   ?prop wdt:P279 ?parent .
-  OPTIONAL { ?prop rdfs:label ?name .
-             FILTER( LANG(?name) = "en" ) . }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "LANG_CODE".
+                           ?prop rdfs:label ?name . }
 }
 ORDER BY ?depth ?name

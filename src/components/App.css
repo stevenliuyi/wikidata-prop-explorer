@@ -54,7 +54,22 @@ App {
   padding-bottom: 20px;
 }
 
-input[type="text"]:focus {
+.form-control:focus {
+  border-color: #337ab7 !important;
+  -webkit-appearance: none;
+  box-shadow: 0 0 0 1px #337ab7 !important;
+}
+
+.form-control {
+  border: 1px solid rgba(0,0,0,0.1) !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+  outline: none !important;
+}
+
+.rt-th { outline: none; }
+
+.rt-th input[type="text"]:focus {
   border-color: #337ab7 !important;
   -webkit-appearance: none;
   box-shadow: 0 0 0 1px #337ab7 !important;
@@ -93,15 +108,6 @@ input[type="text"]:focus {
   border-right: none !important;
 }
 
-.rt-th { outline: none; }
-
-.form-control {
-  border: 1px solid rgba(0,0,0,0.1) !important;
-  box-shadow: none !important;
-  -webkit-box-shadow: none !important;
-  outline: none !important;
-}
-
 .react-toggle {
   vertical-align: middle;
 }
@@ -127,4 +133,18 @@ input[type="text"]:focus {
 .app-name {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700;
+}
+
+.uls-trigger {
+  padding-left: 0 !important;
+  margin-left: -15px;
+}
+
+.uls-langname {
+  vertical-align: middle;
+  padding-left: 5px;
+}
+
+.uls-langcode {
+  display: none;
 }

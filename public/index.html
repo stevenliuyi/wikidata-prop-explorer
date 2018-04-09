@@ -20,6 +20,27 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>Wikidata Property Explorer</title>
+    <link href="%PUBLIC_URL%/jquery.uls/css/jquery.uls.css" rel="stylesheet">
+    <link href="%PUBLIC_URL%/jquery.uls/css/jquery.uls.grid.css" rel="stylesheet">
+    <link href="%PUBLIC_URL%/jquery.uls/css/jquery.uls.lcd.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="%PUBLIC_URL%/jquery.uls/src/jquery.uls.data.js"></script>
+    <script src="%PUBLIC_URL%/jquery.uls/src/jquery.uls.data.utils.js"></script>
+    <script src="%PUBLIC_URL%/jquery.uls/src/jquery.uls.lcd.js"></script>
+    <script src="%PUBLIC_URL%/jquery.uls/src/jquery.uls.languagefilter.js"></script>
+    <script src="%PUBLIC_URL%/jquery.uls/src/jquery.uls.core.js"></script>
+    <script>
+      $( document ).ready( function() {
+        $( '.uls-trigger' ).uls( {
+          onSelect: function( language ) {
+            var languageName = $.uls.data.getAutonym( language );
+            $( '.uls-langname' ).text( languageName );
+            $( '.uls-langcode' ).text( language );
+          },
+          quickList: ['ar', 'de', 'en', 'es', 'fr', 'hi', 'it', 'ja', 'pt', 'ru', 'zh-hans', 'zh-hant']
+        } );
+      } );
+    </script>
   </head>
   <body>
     <noscript>

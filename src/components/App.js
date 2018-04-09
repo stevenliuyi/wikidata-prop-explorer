@@ -8,13 +8,15 @@ import PropTree from './PropTree'
 import PropTable from './PropTable'
 import TopNavBar from './TopNavBar'
 import ReactGA from 'react-ga'
+import $ from 'jquery'
 
 class App extends Component {
   state = {
     propTree: {},
     propList: [],
     currentPropId: '',
-    toggleChecked: true
+    toggleChecked: true,
+    language: 'en'
   }
 
   addPropToTree = (tree, propId, propName, parentId) => {
@@ -34,7 +36,7 @@ class App extends Component {
 
   getPropTree = data => {
     let propTree = {
-      name: 'Wikidata property',
+      name: '',
       qid: 'Q18616576',
       toggled: true,
       children: []
@@ -44,6 +46,7 @@ class App extends Component {
       const propId = prop.prop.value.substr(31)
       const propName = prop.name != null ? prop.name.value : ''
       const parentId = prop.parent.value.substr(31)
+      if (propId === propTree.qid) propTree.name = propName
       this.addPropToTree(propTree, propId, propName, parentId)
     })
 
@@ -71,14 +74,15 @@ class App extends Component {
     this.setState({ toggleChecked: event.target.checked })
   }
 
-  componentWillMount() {
+  fetchPropTree = language => {
     const propTreeQueryFilename =
       process.env.NODE_ENV === 'development'
-        ? `/queries/prop-tree.rq`
-        : `${process.env.PUBLIC_URL}/queries/prop-tree.rq`
+        ? `/queries/prop-tree-template.rq`
+        : `${process.env.PUBLIC_URL}/queries/prop-tree-template.rq`
 
     fetch(propTreeQueryFilename)
       .then(res => res.text())
+      .then(query_template => query_template.replace(/LANG_CODE/, language))
       .then(query =>
         WikidataAPI.fetchSPARQLResult(`query=${encodeURIComponent(query)}`)
       )
@@ -88,10 +92,15 @@ class App extends Component {
       })
   }
 
+  componentWillMount() {
+    this.fetchPropTree(this.state.language)
+  }
+
   componentWillUpdate(nextProps, nextState) {
     if (
       nextState.currentPropId !== this.state.currentPropId ||
-      nextState.toggleChecked !== this.state.toggleChecked
+      nextState.toggleChecked !== this.state.toggleChecked ||
+      nextState.language !== this.state.language
     ) {
       const propListQueryFilename =
         process.env.NODE_ENV === 'development'
@@ -101,10 +110,9 @@ class App extends Component {
       fetch(propListQueryFilename)
         .then(res => res.text())
         .then(query_template => {
-          let query = query_template.replace(
-            /CLASS_ID/,
-            nextState.currentPropId
-          )
+          let query = query_template
+            .replace(/CLASS_ID/, nextState.currentPropId)
+            .replace(/LANG_CODE/g, nextState.language)
           // don't show properties of sub-branches
           if (!nextState.toggleChecked)
             query = query.replace(/\/wdt:P279\*/, '')
@@ -118,12 +126,21 @@ class App extends Component {
           this.getPropList(data.results.bindings)
         })
     }
+
+    if (nextState.language !== this.state.language) {
+      this.fetchPropTree(nextState.language)
+    }
   }
 
   componentDidMount() {
     // Google Analytics
     ReactGA.initialize('UA-117183010-1')
     ReactGA.pageview(window.location.pathname + window.location.search)
+
+    $('.uls-langcode').on('DOMSubtreeModified', () => {
+      const langcode = $('.uls-langcode').text()
+      if (langcode !== '') this.setState({ language: langcode })
+    })
   }
 
   render() {
