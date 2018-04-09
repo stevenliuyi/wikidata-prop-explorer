@@ -73,12 +73,17 @@ class PropTree extends Component {
             />
           </div>
         </div>
-        <div style={{ height: 'calc(100vh - 250px)', overflow: 'auto' }}>
+        <div style={{ maxHeight: 'calc(100vh - 280px)', overflow: 'auto' }}>
           <Treebeard
             data={this.state.tree}
             onToggle={this.onToggle}
             style={treeStyle}
           />
+        </div>
+        <div className="text-muted pull-right" style={{ paddingTop: '3px' }}>
+          {this.props.numOfResults
+            ? `${this.props.numOfResults} properties found`
+            : ''}
         </div>
       </div>
     )

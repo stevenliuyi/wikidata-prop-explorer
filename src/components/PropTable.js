@@ -52,7 +52,8 @@ class PropTable extends Component {
             },
             {
               Header: 'Type',
-              accessor: 'propType'
+              accessor: 'propType',
+              width: 150
             }
           ]}
           pageSize={

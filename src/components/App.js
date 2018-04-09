@@ -156,6 +156,7 @@ class App extends Component {
                   onChange={newId => this.setState({ currentPropId: newId })}
                   toggleChecked={this.state.toggleChecked}
                   handleToggleChange={this.handleToggleChange}
+                  numOfResults={this.state.propList.length}
                 />
               </Col>
               <Col sm={8}>
