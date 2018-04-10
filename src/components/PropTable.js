@@ -18,6 +18,21 @@ class PropTable extends Component {
     return 0
   }
 
+  subComponent = row => {
+    return <div style={{ padding: '20px' }}>{row.row.propId}</div>
+  }
+
+  labelFilterMethod = (filter, row) => {
+    const id = filter.pivotId || filter.id
+    let values = [
+      row[id][0].toLowerCase(),
+      ...row[id][1].split(' | ').map(a => a.toLowerCase())
+    ]
+    if (row[id] == null) values = ''
+    const filterValue = filter.value.toLowerCase()
+    return values.some(v => v.includes(filterValue))
+  }
+
   render() {
     return (
       <div id="prop-table">
@@ -40,20 +55,40 @@ class PropTable extends Component {
                 </div>
               ),
               sortMethod: this.idSortMethod,
-              width: 100
+              width: 80
             },
             {
               Header: 'Label',
-              accessor: 'propLabel'
+              id: 'propLabel',
+              accessor: d => [d.propLabel, d.propAliases],
+              Cell: row => (
+                <div>
+                  {row.value[0]}
+                  <br />
+                  {row.value[1] !== '' && (
+                    <span
+                      className="text-muted"
+                      style={{ fontSize: 'smaller' }}
+                    >
+                      {row.value[1]}
+                    </span>
+                  )}
+                </div>
+              ),
+              filterMethod: this.labelFilterMethod,
+              style: { whiteSpace: 'normal' },
+              minWidth: 100
             },
             {
               Header: 'Description',
-              accessor: 'propDescription'
+              accessor: 'propDescription',
+              style: { whiteSpace: 'normal' },
+              minWidth: 150
             },
             {
               Header: 'Type',
               accessor: 'propType',
-              width: 150
+              width: 80
             }
           ]}
           pageSize={

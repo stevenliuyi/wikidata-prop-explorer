@@ -1,8 +1,14 @@
-SELECT DISTINCT ?prop ?label ?desc ?type WHERE {
+SELECT DISTINCT
+?prop ?label ?desc ?type
+(GROUP_CONCAT(DISTINCT ?alias; separator=" | ") AS ?aliases)
+WHERE {
   ?prop wdt:P31/wdt:P279* wd:CLASS_ID .
   ?prop wikibase:propertyType ?type .
   OPTIONAL { ?prop rdfs:label ?label .
              FILTER ( LANG(?label) = "LANG_CODE" ) . }
   OPTIONAL { ?prop schema:description ?desc .
              FILTER ( LANG(?desc) = "LANG_CODE" ) . }
+  OPTIONAL { ?prop skos:altLabel ?alias
+             FILTER ( LANG (?alias) = "LANG_CODE" ) . }
 }
+GROUP BY ?prop ?label ?desc ?type

@@ -14,9 +14,10 @@ class App extends Component {
   state = {
     propTree: {},
     propList: [],
-    currentPropId: '',
+    currentPropClassId: '',
     toggleChecked: true,
-    language: 'en'
+    language: 'en',
+    propData: {}
   }
 
   addPropToTree = (tree, propId, propName, parentId) => {
@@ -59,11 +60,13 @@ class App extends Component {
       const propLabel = prop.label != null ? prop.label.value : ''
       const propDescription = prop.desc != null ? prop.desc.value : ''
       const propType = prop.type.value.substr(26)
+      const propAliases = prop.aliases != null ? prop.aliases.value : ''
       return {
         propId,
         propLabel,
         propDescription,
-        propType
+        propType,
+        propAliases
       }
     })
 
@@ -98,7 +101,7 @@ class App extends Component {
 
   componentWillUpdate(nextProps, nextState) {
     if (
-      nextState.currentPropId !== this.state.currentPropId ||
+      nextState.currentPropClassId !== this.state.currentPropClassId ||
       nextState.toggleChecked !== this.state.toggleChecked ||
       nextState.language !== this.state.language
     ) {
@@ -111,7 +114,7 @@ class App extends Component {
         .then(res => res.text())
         .then(query_template => {
           let query = query_template
-            .replace(/CLASS_ID/, nextState.currentPropId)
+            .replace(/CLASS_ID/, nextState.currentPropClassId)
             .replace(/LANG_CODE/g, nextState.language)
           // don't show properties of sub-branches
           if (!nextState.toggleChecked)
@@ -153,7 +156,9 @@ class App extends Component {
               <Col sm={4}>
                 <PropTree
                   tree={this.state.propTree}
-                  onChange={newId => this.setState({ currentPropId: newId })}
+                  onChange={newId =>
+                    this.setState({ currentPropClassId: newId })
+                  }
                   toggleChecked={this.state.toggleChecked}
                   handleToggleChange={this.handleToggleChange}
                   numOfResults={this.state.propList.length}
