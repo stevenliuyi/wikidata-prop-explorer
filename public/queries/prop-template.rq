@@ -1,6 +1,6 @@
 SELECT DISTINCT
 ?prop ?label ?desc ?type
-(GROUP_CONCAT(DISTINCT ?alias; separator=" | ") AS ?aliases)
+(GROUP_CONCAT(DISTINCT ?alias; SEPARATOR=" | ") AS ?aliases)
 WHERE {
   ?prop wdt:P31/wdt:P279* wd:CLASS_ID .
   ?prop wikibase:propertyType ?type .

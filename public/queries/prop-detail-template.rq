@@ -1,0 +1,17 @@
+SELECT 
+?prop
+(GROUP_CONCAT(?class) AS ?classes)
+(GROUP_CONCAT(?className; SEPARATOR="|") AS ?classNames)
+?count
+WHERE {
+  VALUES ?prop { wd:PROP_ID }
+  OPTIONAL { ?prop wdt:P31 ?class . }
+  {
+    SELECT (COUNT(*) AS ?count) WHERE {
+      ?s p:PROP_ID ?o .
+    }
+  }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "LANG_CODE".
+                           ?class rdfs:label ?className . }
+}
+GROUP BY ?prop ?count

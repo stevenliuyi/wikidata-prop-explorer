@@ -153,3 +153,13 @@ App {
   color: #337ab7;
   font-weight: bold; 
 }
+
+.table {
+  background-color: #eee !important;
+  margin-bottom: 0px !important;
+}
+
+.detail-title {
+  padding-left: 20px;
+  font-weight: bold;
+}

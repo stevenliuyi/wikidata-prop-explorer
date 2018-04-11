@@ -15,9 +15,10 @@ class App extends Component {
     propTree: {},
     propList: [],
     currentPropClassId: '',
+    currentPropId: '',
     toggleChecked: true,
     language: 'en',
-    propData: {}
+    propDetailData: {}
   }
 
   addPropToTree = (tree, propId, propName, parentId) => {
@@ -73,6 +74,23 @@ class App extends Component {
     this.setState({ propList })
   }
 
+  getPropDetail = (data, language) => {
+    const propId = data[0].prop.value.substr(31)
+    const propClasses = data[0].classes.value.split(' ').map(c => c.substr(31))
+    const propClassNames = data[0].classNames.value.split('|')
+    const count = parseInt(data[0].count.value, 10)
+
+    this.setState({
+      propDetailData: {
+        ...this.state.propDetailData,
+        [propId]: {
+          ...this.state.propDetailData[propId],
+          [language]: { propClasses, propClassNames, count }
+        }
+      }
+    })
+  }
+
   handleToggleChange = event => {
     this.setState({ toggleChecked: event.target.checked })
   }
@@ -92,6 +110,25 @@ class App extends Component {
       .then(data => {
         if (data === null) return
         this.getPropTree(data.results.bindings)
+      })
+  }
+
+  fetchPropDetail = (id, language) => {
+    const propDetailQueryFilename =
+      process.env.NODE_ENV === 'development'
+        ? `/queries/prop-detail-template.rq`
+        : `${process.env.PUBLIC_URL}/queries/prop-detail-template.rq`
+
+    fetch(propDetailQueryFilename)
+      .then(res => res.text())
+      .then(query_template => query_template.replace(/PROP_ID/g, id))
+      .then(query_template => query_template.replace(/LANG_CODE/, language))
+      .then(query =>
+        WikidataAPI.fetchSPARQLResult(`query=${encodeURIComponent(query)}`)
+      )
+      .then(data => {
+        if (data === null) return
+        this.getPropDetail(data.results.bindings, language)
       })
   }
 
@@ -133,6 +170,15 @@ class App extends Component {
     if (nextState.language !== this.state.language) {
       this.fetchPropTree(nextState.language)
     }
+
+    if (
+      nextState.currentPropId !== this.state.currentPropId ||
+      nextState.language !== this.state.language
+    ) {
+      const propDetail = nextState.propDetailData[nextState.currentPropId]
+      if (propDetail == null || propDetail[nextState.language] == null)
+        this.fetchPropDetail(nextState.currentPropId, nextState.language)
+    }
   }
 
   componentDidMount() {
@@ -165,7 +211,17 @@ class App extends Component {
                 />
               </Col>
               <Col sm={8}>
-                <PropTable propList={this.state.propList} />
+                <PropTable
+                  propList={this.state.propList}
+                  detailData={this.state.propDetailData}
+                  language={this.state.language}
+                  currentPropClassId={this.state.currentPropClassId}
+                  toggleChecked={this.state.toggleChecked}
+                  onExpand={newId => this.setState({ currentPropId: newId })}
+                  onClassSelect={newId =>
+                    this.setState({ currentPropClassId: newId })
+                  }
+                />
               </Col>
             </Row>
           </Grid>

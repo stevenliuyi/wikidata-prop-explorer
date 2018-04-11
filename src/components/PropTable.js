@@ -3,11 +3,39 @@ import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 import ScrollToTop from 'react-scroll-up'
 import MdArrowUpward from 'react-icons/lib/md/arrow-upward'
-import { OverlayTrigger, Tooltip } from 'react-bootstrap'
+import { OverlayTrigger, Tooltip, Table } from 'react-bootstrap'
+import $ from 'jquery'
 
 class PropTable extends Component {
   state = {
-    filtered: []
+    filtered: [],
+    expanded: {},
+    expandedProps: []
+  }
+
+  componentWillReceiveProps(nextProps, nextState) {
+    if (
+      nextProps.currentPropClassId !== this.props.currentPropClassId ||
+      nextProps.language !== this.props.language ||
+      nextProps.toggleChecked !== this.props.toggleChecked
+    )
+      this.setState({ expanded: {} })
+  }
+
+  componentDidUpdate() {
+    const newExpandedProps = $('.prop-id')
+      .toArray()
+      .map(p => p.innerText)
+    let currentPropId = this.props.currentPropId
+    newExpandedProps.forEach(p => {
+      if (!this.state.expandedProps.includes(p)) currentPropId = p
+    })
+    if (currentPropId !== this.props.currentPropId)
+      this.props.onExpand(currentPropId)
+    if (newExpandedProps.toString() !== this.state.expandedProps.toString())
+      this.setState({
+        expandedProps: newExpandedProps
+      })
   }
 
   idSortMethod = (a, b, desc) => {
@@ -19,7 +47,51 @@ class PropTable extends Component {
   }
 
   subComponent = row => {
-    return <div style={{ padding: '20px' }}>{row.row.propId}</div>
+    const blank = (
+      <span className="prop-id" style={{ display: 'none' }}>
+        {row.row.propId}
+      </span>
+    )
+    if (!this.props.detailData[row.row.propId]) return blank
+    const detailData = this.props.detailData[row.row.propId][
+      this.props.language
+    ]
+    if (!detailData) return blank
+    const onClassSelect = this.props.onClassSelect
+    return (
+      <div>
+        {blank}
+        <Table condensed={true} hover={true}>
+          <tbody>
+            {detailData.propClasses.map((propClass, i) => (
+              <tr>
+                <td width="20%">
+                  <span className="detail-title">
+                    {i === 0 ? 'Instance of' : ''}
+                  </span>
+                </td>
+                <td width="80%">
+                  <a
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => onClassSelect(propClass)}
+                  >
+                    {detailData.propClassNames[i] !== ''
+                      ? detailData.propClassNames[i]
+                      : propClass}
+                  </a>
+                </td>
+              </tr>
+            ))}
+            <tr>
+              <td width="20%">
+                <span className="detail-title">Uses</span>
+              </td>
+              <td width="80%">{detailData.count}</td>
+            </tr>
+          </tbody>
+        </Table>
+      </div>
+    )
   }
 
   labelFilterMethod = (filter, row) => {
@@ -91,13 +163,15 @@ class PropTable extends Component {
               width: 80
             }
           ]}
+          SubComponent={this.subComponent}
+          expanded={this.state.expanded}
           pageSize={
             this.props.propList.length !== 0
-              ? Math.min(this.props.propList.length, 200)
+              ? Math.min(this.props.propList.length, 100)
               : 5
           }
           showPageSizeOptions={false}
-          showPagination={this.props.propList.length > 200}
+          showPagination={this.props.propList.length > 100}
           defaultFilterMethod={(filter, row) => {
             const id = filter.pivotId || filter.id
             let value = row[id].toLowerCase()
@@ -106,6 +180,11 @@ class PropTable extends Component {
             return value.includes(filterValue)
           }}
           onFilteredChange={filtered => this.setState({ filtered })}
+          onExpandedChange={newExpanded => {
+            this.setState({
+              expanded: newExpanded
+            })
+          }}
           noDataText={
             this.state.filtered.length === 0
               ? 'Select from the tree to show properties'
