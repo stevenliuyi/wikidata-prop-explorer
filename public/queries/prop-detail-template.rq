@@ -2,16 +2,31 @@ SELECT
 ?prop
 (GROUP_CONCAT(?class) AS ?classes)
 (GROUP_CONCAT(?className; SEPARATOR="|") AS ?classNames)
-?count
+?count ?qualifierCount ?refCount
+?instruction ?subPropertyOf ?subPropertyOfName
 WHERE {
   VALUES ?prop { wd:PROP_ID }
   OPTIONAL { ?prop wdt:P31 ?class . }
+  OPTIONAL { ?prop wdt:P2559 ?instruction . 
+             FILTER ( LANG(?instruction) = "LANG_CODE" ) . }
+  OPTIONAL { ?prop wdt:P1647 ?subPropertyOf . }
   {
     SELECT (COUNT(*) AS ?count) WHERE {
-      ?s p:PROP_ID ?o .
+      ?o p:PROP_ID ?s .
+    }
+  }
+  {
+    SELECT (COUNT(*) AS ?qualifierCount) WHERE {
+      ?o ?p [ pq:PROP_ID ?q ] .
+    }
+  }
+  {
+    SELECT (COUNT(*) AS ?refCount) WHERE {
+      ?o ?p [ pr:PROP_ID ?r ] .
     }
   }
   SERVICE wikibase:label { bd:serviceParam wikibase:language "LANG_CODE".
-                           ?class rdfs:label ?className . }
+                           ?class rdfs:label ?className .
+                           ?subPropertyOf rdfs:label ?subPropertyOfName . }
 }
-GROUP BY ?prop ?count
+GROUP BY ?prop ?count ?qualifierCount ?refCount ?instruction ?subPropertyOf ?subPropertyOfName

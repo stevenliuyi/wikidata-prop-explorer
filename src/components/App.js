@@ -79,13 +79,84 @@ class App extends Component {
     const propClasses = data[0].classes.value.split(' ').map(c => c.substr(31))
     const propClassNames = data[0].classNames.value.split('|')
     const count = parseInt(data[0].count.value, 10)
+    const qualifierCount = parseInt(data[0].qualifierCount.value, 10)
+    const refCount = parseInt(data[0].refCount.value, 10)
+    const instruction = data[0].instruction ? data[0].instruction.value : ''
+    const subPropertyOf = data[0].subPropertyOf
+      ? data[0].subPropertyOf.value.substr(31)
+      : ''
+    const subPropertyOfName = data[0].subPropertyOfName
+      ? data[0].subPropertyOfName.value
+      : ''
 
     this.setState({
       propDetailData: {
         ...this.state.propDetailData,
         [propId]: {
           ...this.state.propDetailData[propId],
-          [language]: { propClasses, propClassNames, count }
+          [language]: {
+            ...(this.state.propDetailData[propId]
+              ? this.state.propDetailData[propId][language]
+              : {}),
+            propClasses,
+            propClassNames,
+            count,
+            qualifierCount,
+            refCount,
+            instruction,
+            subPropertyOf,
+            subPropertyOfName
+          }
+        }
+      }
+    })
+  }
+
+  getPropSeeAlso = (data, language, propId) => {
+    let seeAlsoes = []
+    let seeAlsoLabels = []
+    data.forEach(e => {
+      seeAlsoes.push(e.seeAlso.value.substr(31))
+      seeAlsoLabels.push(e.seeAlsoLabel.value)
+    })
+
+    this.setState({
+      propDetailData: {
+        ...this.state.propDetailData,
+        [propId]: {
+          ...this.state.propDetailData[propId],
+          [language]: {
+            ...(this.state.propDetailData[propId]
+              ? this.state.propDetailData[propId][language]
+              : {}),
+            seeAlsoes,
+            seeAlsoLabels
+          }
+        }
+      }
+    })
+  }
+
+  getPropExamples = (data, language, propId) => {
+    let examples = []
+    let exampleLabels = []
+    data.forEach(e => {
+      examples.push(e.example.value.substr(31))
+      exampleLabels.push(e.exampleLabel.value)
+    })
+
+    this.setState({
+      propDetailData: {
+        ...this.state.propDetailData,
+        [propId]: {
+          ...this.state.propDetailData[propId],
+          [language]: {
+            ...(this.state.propDetailData[propId]
+              ? this.state.propDetailData[propId][language]
+              : {}),
+            examples,
+            exampleLabels
+          }
         }
       }
     })
@@ -122,13 +193,51 @@ class App extends Component {
     fetch(propDetailQueryFilename)
       .then(res => res.text())
       .then(query_template => query_template.replace(/PROP_ID/g, id))
-      .then(query_template => query_template.replace(/LANG_CODE/, language))
+      .then(query_template => query_template.replace(/LANG_CODE/g, language))
       .then(query =>
         WikidataAPI.fetchSPARQLResult(`query=${encodeURIComponent(query)}`)
       )
       .then(data => {
         if (data === null) return
         this.getPropDetail(data.results.bindings, language)
+      })
+
+    const propExampleQueryFilename =
+      process.env.NODE_ENV === 'development'
+        ? `/queries/prop-example-template.rq`
+        : `${process.env.PUBLIC_URL}/queries/prop-example-template.rq`
+
+    fetch(propExampleQueryFilename)
+      .then(res => res.text())
+      .then(query_template => query_template.replace(/PROP_ID/, id))
+      .then(query_template => query_template.replace(/LANG_CODE/, language))
+      .then(query => {
+        return WikidataAPI.fetchSPARQLResult(
+          `query=${encodeURIComponent(query)}`
+        )
+      })
+      .then(data => {
+        if (data === null) return
+        this.getPropExamples(data.results.bindings, language, id)
+      })
+
+    const propSeeAlsoQueryFilename =
+      process.env.NODE_ENV === 'development'
+        ? `/queries/prop-seealso-template.rq`
+        : `${process.env.PUBLIC_URL}/queries/prop-seealso-template.rq`
+
+    fetch(propSeeAlsoQueryFilename)
+      .then(res => res.text())
+      .then(query_template => query_template.replace(/PROP_ID/, id))
+      .then(query_template => query_template.replace(/LANG_CODE/, language))
+      .then(query => {
+        return WikidataAPI.fetchSPARQLResult(
+          `query=${encodeURIComponent(query)}`
+        )
+      })
+      .then(data => {
+        if (data === null) return
+        this.getPropSeeAlso(data.results.bindings, language, id)
       })
   }
 

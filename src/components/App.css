@@ -155,11 +155,33 @@ App {
 }
 
 .table {
-  background-color: #eee !important;
+  background-color: rgba(0,0,0,0.05) !important;
   margin-bottom: 0px !important;
 }
 
 .detail-title {
   padding-left: 20px;
   font-weight: bold;
+}
+
+/* adapted from ReactTable */
+.tree-expander {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%,-50%) rotate(-90deg);
+  transform: translate(-50%,-50%) rotate(-90deg);
+  border-left: 5.04px solid transparent;
+  border-right: 5.04px solid transparent;
+  border-top: 7px solid rgba(0,0,0,0.2);
+  -webkit-transition: all .3s cubic-bezier(.175,.885,.32,1.275);
+  transition: all .3s cubic-bezier(.175,.885,.32,1.275);
+  cursor: pointer;
+}
+
+.rt-expander:after {
+  border-top: 7px solid rgba(0,0,0,0.2) !important;
 }

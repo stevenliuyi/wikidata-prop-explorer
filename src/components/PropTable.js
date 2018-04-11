@@ -3,8 +3,9 @@ import ReactTable from 'react-table'
 import 'react-table/react-table.css'
 import ScrollToTop from 'react-scroll-up'
 import MdArrowUpward from 'react-icons/lib/md/arrow-upward'
-import { OverlayTrigger, Tooltip, Table } from 'react-bootstrap'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import $ from 'jquery'
+import PropDetail from './PropDetail'
 
 class PropTable extends Component {
   state = {
@@ -44,54 +45,6 @@ class PropTable extends Component {
     if (aValue > bValue) return 1
     if (aValue < bValue) return -1
     return 0
-  }
-
-  subComponent = row => {
-    const blank = (
-      <span className="prop-id" style={{ display: 'none' }}>
-        {row.row.propId}
-      </span>
-    )
-    if (!this.props.detailData[row.row.propId]) return blank
-    const detailData = this.props.detailData[row.row.propId][
-      this.props.language
-    ]
-    if (!detailData) return blank
-    const onClassSelect = this.props.onClassSelect
-    return (
-      <div>
-        {blank}
-        <Table condensed={true} hover={true}>
-          <tbody>
-            {detailData.propClasses.map((propClass, i) => (
-              <tr>
-                <td width="20%">
-                  <span className="detail-title">
-                    {i === 0 ? 'Instance of' : ''}
-                  </span>
-                </td>
-                <td width="80%">
-                  <a
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => onClassSelect(propClass)}
-                  >
-                    {detailData.propClassNames[i] !== ''
-                      ? detailData.propClassNames[i]
-                      : propClass}
-                  </a>
-                </td>
-              </tr>
-            ))}
-            <tr>
-              <td width="20%">
-                <span className="detail-title">Uses</span>
-              </td>
-              <td width="80%">{detailData.count}</td>
-            </tr>
-          </tbody>
-        </Table>
-      </div>
-    )
   }
 
   labelFilterMethod = (filter, row) => {
@@ -163,7 +116,9 @@ class PropTable extends Component {
               width: 80
             }
           ]}
-          SubComponent={this.subComponent}
+          SubComponent={row => (
+            <PropDetail propId={row.row.propId} {...this.props} />
+          )}
           expanded={this.state.expanded}
           pageSize={
             this.props.propList.length !== 0
@@ -179,7 +134,11 @@ class PropTable extends Component {
             const filterValue = filter.value.toLowerCase()
             return value.includes(filterValue)
           }}
-          onFilteredChange={filtered => this.setState({ filtered })}
+          onFilteredChange={filtered => {
+            this.setState({ filtered, expanded: {} })
+          }}
+          onSortedChange={() => this.setState({ expanded: {} })}
+          onPageChange={() => this.setState({ expanded: {} })}
           onExpandedChange={newExpanded => {
             this.setState({
               expanded: newExpanded

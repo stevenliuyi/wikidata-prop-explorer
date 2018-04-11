@@ -30,6 +30,22 @@ class PropTree extends Component {
       )
     }
 
+    decorators.Toggle = ({ style }) => {
+      return (
+        <div style={style.base}>
+          <div
+            style={{
+              ...style.wrapper,
+              height: style.height,
+              width: style.width
+            }}
+          >
+            <span className="tree-expander" />
+          </div>
+        </div>
+      )
+    }
+
     this.setState({ decorators })
   }
 
