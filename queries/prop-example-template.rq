@@ -1,0 +1,6 @@
+SELECT ?prop ?example ?exampleLabel
+WHERE {
+  VALUES ?prop { wd:PROP_ID }
+  ?prop wdt:P1855 ?example .
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "LANG_CODE". }
+}

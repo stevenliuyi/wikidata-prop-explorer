@@ -1,0 +1,6 @@
+SELECT ?prop ?seeAlso ?seeAlsoLabel
+WHERE {
+  VALUES ?prop { wd:PROP_ID }
+  ?prop wdt:P1659 ?seeAlso .
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "LANG_CODE". }
+}
