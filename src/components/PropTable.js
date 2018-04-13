@@ -67,7 +67,9 @@ class PropTable extends Component {
           filtered={this.state.filtered}
           columns={[
             {
-              Header: 'ID',
+              Header: this.props.translations.id
+                ? this.props.translations.id
+                : 'ID',
               accessor: 'propId',
               Cell: row => (
                 <div>
@@ -83,7 +85,9 @@ class PropTable extends Component {
               width: 80
             },
             {
-              Header: 'Label',
+              Header: this.props.translations.label
+                ? this.props.translations.label
+                : 'Label',
               id: 'propLabel',
               accessor: d => [d.propLabel, d.propAliases],
               Cell: row => (
@@ -105,13 +109,17 @@ class PropTable extends Component {
               minWidth: 100
             },
             {
-              Header: 'Description',
+              Header: this.props.translations.description
+                ? this.props.translations.description
+                : 'Description',
               accessor: 'propDescription',
               style: { whiteSpace: 'normal' },
               minWidth: 150
             },
             {
-              Header: 'Type',
+              Header: this.props.translations.type
+                ? this.props.translations.type
+                : 'Type',
               accessor: 'propType',
               width: 80
             }
@@ -146,8 +154,12 @@ class PropTable extends Component {
           }}
           noDataText={
             this.state.filtered.length === 0
-              ? 'Select from the tree to show properties'
-              : 'No properties found'
+              ? this.props.translations.select_tree
+                ? this.props.translations.select_tree
+                : 'Select from the tree to show properties'
+              : this.props.translations.no_properties
+                ? this.props.translations.no_properties
+                : 'No properties found'
           }
         />
         <ScrollToTop showUnder={100}>

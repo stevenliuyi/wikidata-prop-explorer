@@ -3,7 +3,7 @@ import './App.css'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap/dist/css/bootstrap-theme.css'
 import { Grid, Row, Col } from 'react-bootstrap'
-import * as WikidataAPI from '../utils/api'
+import * as API from '../utils/api'
 import PropTree from './PropTree'
 import PropTable from './PropTable'
 import TopNavBar from './TopNavBar'
@@ -18,7 +18,8 @@ class App extends Component {
     currentPropId: '',
     toggleChecked: true,
     language: 'en',
-    propDetailData: {}
+    propDetailData: {},
+    translations: {}
   }
 
   addPropToTree = (tree, propId, propName, parentId) => {
@@ -176,7 +177,7 @@ class App extends Component {
       .then(res => res.text())
       .then(query_template => query_template.replace(/LANG_CODE/, language))
       .then(query =>
-        WikidataAPI.fetchSPARQLResult(`query=${encodeURIComponent(query)}`)
+        API.fetchSPARQLResult(`query=${encodeURIComponent(query)}`)
       )
       .then(data => {
         if (data === null) return
@@ -195,7 +196,7 @@ class App extends Component {
       .then(query_template => query_template.replace(/PROP_ID/g, id))
       .then(query_template => query_template.replace(/LANG_CODE/g, language))
       .then(query =>
-        WikidataAPI.fetchSPARQLResult(`query=${encodeURIComponent(query)}`)
+        API.fetchSPARQLResult(`query=${encodeURIComponent(query)}`)
       )
       .then(data => {
         if (data === null) return
@@ -212,9 +213,7 @@ class App extends Component {
       .then(query_template => query_template.replace(/PROP_ID/, id))
       .then(query_template => query_template.replace(/LANG_CODE/, language))
       .then(query => {
-        return WikidataAPI.fetchSPARQLResult(
-          `query=${encodeURIComponent(query)}`
-        )
+        return API.fetchSPARQLResult(`query=${encodeURIComponent(query)}`)
       })
       .then(data => {
         if (data === null) return
@@ -231,14 +230,18 @@ class App extends Component {
       .then(query_template => query_template.replace(/PROP_ID/, id))
       .then(query_template => query_template.replace(/LANG_CODE/, language))
       .then(query => {
-        return WikidataAPI.fetchSPARQLResult(
-          `query=${encodeURIComponent(query)}`
-        )
+        return API.fetchSPARQLResult(`query=${encodeURIComponent(query)}`)
       })
       .then(data => {
         if (data === null) return
         this.getPropSeeAlso(data.results.bindings, language, id)
       })
+  }
+
+  getTranslations = language => {
+    API.fetchToolTranslations(language).then(res =>
+      this.setState({ translations: res })
+    )
   }
 
   componentWillMount() {
@@ -268,7 +271,7 @@ class App extends Component {
           return query
         })
         .then(query =>
-          WikidataAPI.fetchSPARQLResult(`query=${encodeURIComponent(query)}`)
+          API.fetchSPARQLResult(`query=${encodeURIComponent(query)}`)
         )
         .then(data => {
           if (data === null) return
@@ -278,6 +281,7 @@ class App extends Component {
 
     if (nextState.language !== this.state.language) {
       this.fetchPropTree(nextState.language)
+      this.getTranslations(nextState.language)
     }
 
     if (
@@ -305,7 +309,7 @@ class App extends Component {
     return (
       <div className="site">
         <div className="site-content">
-          <TopNavBar />
+          <TopNavBar translations={this.state.translations} />
           <Grid>
             <Row>
               <Col sm={4}>
@@ -317,6 +321,7 @@ class App extends Component {
                   toggleChecked={this.state.toggleChecked}
                   handleToggleChange={this.handleToggleChange}
                   numOfResults={this.state.propList.length}
+                  translations={this.state.translations}
                 />
               </Col>
               <Col sm={8}>
@@ -330,6 +335,7 @@ class App extends Component {
                   onClassSelect={newId =>
                     this.setState({ currentPropClassId: newId })
                   }
+                  translations={this.state.translations}
                 />
               </Col>
             </Row>

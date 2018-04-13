@@ -22,7 +22,11 @@ class PropDetail extends Component {
           <tbody>
             {detailData.propClasses && (
               <PropDetailRow
-                title="Instance of"
+                title={
+                  this.props.translations.instance_of
+                    ? this.props.translations.instance_of
+                    : 'Instance of'
+                }
                 content={detailData.propClasses.map((propClass, i) => (
                   <div key={`class-${i}`}>
                     <a
@@ -40,7 +44,11 @@ class PropDetail extends Component {
             {detailData.subPropertyOf !== '' &&
               detailData.subPropertyOf != null && (
                 <PropDetailRow
-                  title="Subproperty of"
+                  title={
+                    this.props.translations.subproperty_of
+                      ? this.props.translations.subproperty_of
+                      : 'Subproperty of'
+                  }
                   content={
                     <div>
                       <a
@@ -62,12 +70,31 @@ class PropDetail extends Component {
               )}
             {detailData.count >= 0 && (
               <PropDetailRow
-                title="Uses"
+                title={
+                  this.props.translations.uses
+                    ? this.props.translations.uses
+                    : 'Uses'
+                }
                 content={
                   <div>
-                    <div>{detailData.count} statements</div>
-                    <div>{detailData.qualifierCount} qualifiers</div>
-                    <div>{detailData.refCount} references</div>
+                    <div>
+                      {(this.props.translations.statements
+                        ? this.props.translations.statements
+                        : '$1 statements'
+                      ).replace(/\$1/, detailData.count)}
+                    </div>
+                    <div>
+                      {(this.props.translations.qualifiers
+                        ? this.props.translations.qualifiers
+                        : '$1 qualifiers'
+                      ).replace(/\$1/, detailData.qualifierCount)}
+                    </div>
+                    <div>
+                      {(this.props.translations.references
+                        ? this.props.translations.references
+                        : '$1 references'
+                      ).replace(/\$1/, detailData.refCount)}
+                    </div>
                   </div>
                 }
               />
@@ -75,7 +102,11 @@ class PropDetail extends Component {
             {detailData.examples &&
               detailData.examples.length > 0 && (
                 <PropDetailRow
-                  title="Examples"
+                  title={
+                    this.props.translations.examples
+                      ? this.props.translations.examples
+                      : 'Examples'
+                  }
                   content={detailData.examples.map((example, i) => {
                     return (
                       <div key={`example-${i}`}>
@@ -97,7 +128,11 @@ class PropDetail extends Component {
             {detailData.seeAlsoes &&
               detailData.seeAlsoes.length > 0 && (
                 <PropDetailRow
-                  title="See also"
+                  title={
+                    this.props.translations.see_also
+                      ? this.props.translations.see_also
+                      : 'See also'
+                  }
                   content={detailData.seeAlsoes.map((seeAlso, i) => {
                     return (
                       <div key={`see-also-${i}`}>

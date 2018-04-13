@@ -92,14 +92,20 @@ class PropTree extends Component {
           <FormControl
             type="text"
             value={this.state.filterText}
-            placeholder="Search the tree..."
+            placeholder={
+              this.props.translations.tree_search
+                ? this.props.translations.tree_search
+                : 'Search the tree...'
+            }
             onChange={this.onFilterChange}
           />
         </div>
         <div className="clearfix" style={{ marginBottom: '5px' }}>
           <div className="pull-right">
             <span style={{ marginRight: '5px', fontSize: '8pt' }}>
-              Show properties in sub-branches
+              {this.props.translations.subbranch_toggle
+                ? this.props.translations.subbranch_toggle
+                : 'Show properties in sub-branches'}
             </span>
             <Toggle
               checked={this.props.toggleChecked}
@@ -118,7 +124,10 @@ class PropTree extends Component {
         </div>
         <div className="text-muted pull-right" style={{ paddingTop: '3px' }}>
           {this.props.numOfResults
-            ? `${this.props.numOfResults} properties found`
+            ? (this.props.translations.num_properties
+                ? this.props.translations.num_properties
+                : '$1 properties found'
+              ).replace(/\$1/, this.props.numOfResults)
             : ''}
         </div>
       </div>
