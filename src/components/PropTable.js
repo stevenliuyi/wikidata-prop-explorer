@@ -165,7 +165,13 @@ class PropTable extends Component {
         <ScrollToTop showUnder={100}>
           <OverlayTrigger
             placement="left"
-            overlay={<Tooltip id="back-to-top">back to top</Tooltip>}
+            overlay={
+              <Tooltip id="back-to-top">
+                {this.props.translations.back_to_top
+                  ? this.props.translations.back_to_top
+                  : 'back to top'}
+              </Tooltip>
+            }
           >
             <MdArrowUpward size={35} className="text-muted" />
           </OverlayTrigger>
