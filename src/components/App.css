@@ -185,3 +185,12 @@ App {
 .rt-expander:after {
   border-top: 7px solid rgba(0,0,0,0.2) !important;
 }
+
+.hide {
+ display: none;
+}
+
+.app-name {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+}

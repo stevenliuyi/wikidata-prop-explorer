@@ -16,40 +16,54 @@ class TopNavBar extends Component {
             </span>
           </Navbar.Brand>
         </Navbar.Header>
-        <Nav pullRight>
-          <NavItem href="https://github.com/stevenliuyi/wikidata-prop-explorer">
-            <OverlayTrigger
-              placement="bottom"
-              overlay={
-                <Tooltip id="source">
-                  {this.props.translations.source
-                    ? this.props.translations.source
-                    : 'source code'}
-                </Tooltip>
-              }
-            >
-              <GoMarkGithub size={18} />
-            </OverlayTrigger>
-          </NavItem>
-          <NavItem>
-            <OverlayTrigger
-              placement="bottom"
-              overlay={
-                <Tooltip id="change-language">
-                  {this.props.translations.language
-                    ? this.props.translations.language
-                    : 'change language'}
-                </Tooltip>
-              }
-            >
-              <span className="uls-trigger">
-                <MdTranslate size={18} />
-                <span className="uls-langname">English</span>
-                <span className="uls-langcode">en</span>
-              </span>
-            </OverlayTrigger>
-          </NavItem>
-        </Nav>
+        <Navbar.Collapse>
+          <Nav>
+            <NavItem onSelect={() => this.props.handleTabSelect(false)}>
+              {this.props.translations.home
+                ? this.props.translations.home
+                : 'Home'}
+            </NavItem>
+            <NavItem onSelect={() => this.props.handleTabSelect(true)}>
+              {this.props.translations.about
+                ? this.props.translations.about
+                : 'About'}
+            </NavItem>
+          </Nav>
+          <Nav pullRight>
+            <NavItem href="https://github.com/stevenliuyi/wikidata-prop-explorer">
+              <OverlayTrigger
+                placement="bottom"
+                overlay={
+                  <Tooltip id="source">
+                    {this.props.translations.source
+                      ? this.props.translations.source
+                      : 'source code'}
+                  </Tooltip>
+                }
+              >
+                <GoMarkGithub size={18} />
+              </OverlayTrigger>
+            </NavItem>
+            <NavItem>
+              <OverlayTrigger
+                placement="bottom"
+                overlay={
+                  <Tooltip id="change-language">
+                    {this.props.translations.language
+                      ? this.props.translations.language
+                      : 'change language'}
+                  </Tooltip>
+                }
+              >
+                <span className="uls-trigger">
+                  <MdTranslate size={18} />
+                  <span className="uls-langname">English</span>
+                  <span className="uls-langcode">en</span>
+                </span>
+              </OverlayTrigger>
+            </NavItem>
+          </Nav>
+        </Navbar.Collapse>
       </Navbar>
     )
   }

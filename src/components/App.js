@@ -7,6 +7,7 @@ import * as API from '../utils/api'
 import PropTree from './PropTree'
 import PropTable from './PropTable'
 import TopNavBar from './TopNavBar'
+import About from './About'
 import ReactGA from 'react-ga'
 import $ from 'jquery'
 
@@ -19,7 +20,8 @@ class App extends Component {
     toggleChecked: true,
     language: 'en',
     propDetailData: {},
-    translations: {}
+    translations: {},
+    show_about: false
   }
 
   addPropToTree = (tree, propId, propName, parentId) => {
@@ -309,36 +311,50 @@ class App extends Component {
     return (
       <div className="site">
         <div className="site-content">
-          <TopNavBar translations={this.state.translations} />
+          <TopNavBar
+            translations={this.state.translations}
+            handleTabSelect={s => this.setState({ show_about: s })}
+          />
           <Grid>
-            <Row>
-              <Col sm={4}>
-                <PropTree
-                  tree={this.state.propTree}
-                  onChange={newId =>
-                    this.setState({ currentPropClassId: newId })
-                  }
-                  toggleChecked={this.state.toggleChecked}
-                  handleToggleChange={this.handleToggleChange}
-                  numOfResults={this.state.propList.length}
-                  translations={this.state.translations}
-                />
-              </Col>
-              <Col sm={8}>
-                <PropTable
-                  propList={this.state.propList}
-                  detailData={this.state.propDetailData}
-                  language={this.state.language}
-                  currentPropClassId={this.state.currentPropClassId}
-                  toggleChecked={this.state.toggleChecked}
-                  onExpand={newId => this.setState({ currentPropId: newId })}
-                  onClassSelect={newId =>
-                    this.setState({ currentPropClassId: newId })
-                  }
-                  translations={this.state.translations}
-                />
-              </Col>
-            </Row>
+            <div className={this.state.show_about ? 'hide' : ''}>
+              <Row>
+                <Col sm={4}>
+                  <PropTree
+                    tree={this.state.propTree}
+                    onChange={newId =>
+                      this.setState({ currentPropClassId: newId })
+                    }
+                    toggleChecked={this.state.toggleChecked}
+                    handleToggleChange={this.handleToggleChange}
+                    numOfResults={this.state.propList.length}
+                    translations={this.state.translations}
+                  />
+                </Col>
+                <Col sm={8}>
+                  <PropTable
+                    propList={this.state.propList}
+                    detailData={this.state.propDetailData}
+                    language={this.state.language}
+                    currentPropClassId={this.state.currentPropClassId}
+                    toggleChecked={this.state.toggleChecked}
+                    onExpand={newId => this.setState({ currentPropId: newId })}
+                    onClassSelect={newId =>
+                      this.setState({ currentPropClassId: newId })
+                    }
+                    translations={this.state.translations}
+                  />
+                </Col>
+              </Row>
+            </div>
+            <div className={this.state.show_about ? '' : 'hide'}>
+              <Row>
+                <Col sm={3} />
+                <Col sm={6}>
+                  <About translations={this.state.translations} />
+                </Col>
+                <Col sm={3} />
+              </Row>
+            </div>
           </Grid>
         </div>
         <footer className="footer text-muted">
