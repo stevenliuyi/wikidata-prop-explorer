@@ -12,7 +12,7 @@ export const fetchSPARQLResult = sparql =>
 // fetch translations
 export const fetchToolTranslations = lang =>
   fetch(
-    `https://cors-anywhere.herokuapp.com/https://tools.wmflabs.org/tooltranslate/data/prop-explorer/${lang}.json`
+    `https://tools.wmflabs.org/tooltranslate/data/prop-explorer/${lang}.json`
   ).then(res => {
     return res.status >= 400 ? {} : res.json()
   })
