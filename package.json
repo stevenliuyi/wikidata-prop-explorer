@@ -7,6 +7,7 @@
     "jquery": "^3.3.1",
     "react": "^16.3.1",
     "react-bootstrap": "^0.32.1",
+    "react-contextmenu": "^2.9.2",
     "react-dom": "^16.3.1",
     "react-ga": "^2.4.1",
     "react-icons": "^2.2.7",

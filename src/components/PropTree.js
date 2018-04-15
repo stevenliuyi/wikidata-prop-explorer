@@ -5,6 +5,8 @@ import Toggle from 'react-toggle'
 import 'react-toggle/style.css'
 import treeStyle from '../utils/tree'
 import * as filters from '../utils/filter'
+import $ from 'jquery'
+import { ContextMenuTrigger, ContextMenu, MenuItem } from 'react-contextmenu'
 
 class PropTree extends Component {
   state = {
@@ -20,12 +22,21 @@ class PropTree extends Component {
     decorators.Header = ({ style, node }) => {
       return (
         <div style={style.base}>
-          <div
-            style={style.title}
-            dangerouslySetInnerHTML={{
-              __html: node.name
-            }}
-          />
+          <ContextMenuTrigger id="context-menu">
+            <div
+              className="unselectable"
+              style={style.title}
+              dangerouslySetInnerHTML={{
+                __html: node.name
+              }}
+            />
+            <div
+              style={{ display: 'none' }}
+              dangerouslySetInnerHTML={{
+                __html: node.qid
+              }}
+            />
+          </ContextMenuTrigger>
         </div>
       )
     }
@@ -85,6 +96,16 @@ class PropTree extends Component {
     this.setState({ tree: filtered, filterText })
   }
 
+  handleMenuClick(e, data, target) {
+    window.open(
+      `https://www.wikidata.org/entity/${$(target)
+        .children()
+        .last()
+        .text()}`,
+      '_blank'
+    )
+  }
+
   render() {
     return (
       <div>
@@ -130,6 +151,13 @@ class PropTree extends Component {
               ).replace(/\$1/, this.props.numOfResults)
             : ''}
         </div>
+        <ContextMenu id="context-menu">
+          <MenuItem onClick={this.handleMenuClick}>
+            {this.props.translations.open_in_wd
+              ? this.props.translations.open_in_wd
+              : 'Open link on Wikidata'}
+          </MenuItem>
+        </ContextMenu>
       </div>
     )
   }
