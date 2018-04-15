@@ -12,7 +12,9 @@ export const fetchSPARQLResult = sparql =>
 // fetch translations
 export const fetchToolTranslations = lang =>
   fetch(
-    `https://tools.wmflabs.org/tooltranslate/data/prop-explorer/${lang}.json`
+    process.env.PUBLIC_URL === '/prop-explorer' // on wmflabs
+      ? `https://tools.wmflabs.org/tooltranslate/data/prop-explorer/${lang}.json`
+      : `https://cors-anywhere.herokuapp.com/https://tools.wmflabs.org/tooltranslate/data/prop-explorer/${lang}.json`
   ).then(res => {
     return res.status >= 400 ? {} : res.json()
   })
