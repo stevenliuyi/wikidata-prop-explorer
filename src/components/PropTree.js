@@ -15,6 +15,24 @@ class PropTree extends Component {
     decorators: {}
   }
 
+  componentDidUpdate() {
+    // expand region for triggering customized context menu
+    $('.tree')
+      .find('li')
+      .each(function() {
+        $(this)
+          .children()
+          .first()
+          .css('display', 'flex')
+        $(this)
+          .children()
+          .first()
+          .children()
+          .last()
+          .css('flex-grow', '100')
+      })
+  }
+
   componentWillMount() {
     this.onToggle = this.onToggle.bind(this)
     this.onFilterChange = this.onFilterChange.bind(this)

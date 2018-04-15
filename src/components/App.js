@@ -318,7 +318,7 @@ class App extends Component {
           <Grid>
             <div className={this.state.show_about ? 'hide' : ''}>
               <Row>
-                <Col sm={4}>
+                <Col sm={4} className="tree">
                   <PropTree
                     tree={this.state.propTree}
                     onChange={newId =>
