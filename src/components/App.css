@@ -203,6 +203,30 @@ App {
   user-select: none;
 }
 
+.dropdown-menu {
+  min-width: 110px !important;
+  width: 110px !important;
+  font-size: 8pt !important;
+}
+
+.dropdown-menu > .active > a, .dropdown-menu > .active > a:hover, .dropdown-menu > .active > a:focus {
+  background-color: #fff !important;
+  background-image: none !important;
+  color: #000 !important;
+}
+
+.multiselect-container > li > a > label {
+  padding: 3px 20px 3px 25px !important;
+}
+
+.btn-type {
+  width: 110px !important;
+  overflow: hidden;
+  white-space: nowrap;
+  display: inline-block;
+  text-overflow: ellipsis;
+}
+
 /* react-contextmenu */
 .react-contextmenu {
   background-color: #fff;

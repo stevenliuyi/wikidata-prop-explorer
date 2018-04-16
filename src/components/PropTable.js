@@ -6,15 +6,33 @@ import MdArrowUpward from 'react-icons/lib/md/arrow-upward'
 import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 import $ from 'jquery'
 import PropDetail from './PropDetail'
+import Multiselect from 'react-bootstrap-multiselect'
+import 'react-bootstrap-multiselect/css/bootstrap-multiselect.css'
+import { ContextMenuTrigger, ContextMenu, MenuItem } from 'react-contextmenu'
 
 class PropTable extends Component {
   state = {
     filtered: [],
     expanded: {},
-    expandedProps: []
+    expandedProps: [],
+    typeList: [
+      { value: 'CommonsMedia', selected: true },
+      { value: 'ExternalId', selected: true },
+      { value: 'GeoShape', selected: true },
+      { value: 'GlobeCoordinate', selected: true },
+      { value: 'Monolingualtext', selected: true },
+      { value: 'Quantity', selected: true },
+      { value: 'String', selected: true },
+      { value: 'TabularData', selected: true },
+      { value: 'Time', selected: true },
+      { value: 'Url', selected: true },
+      { value: 'WikibaseItem', selected: true },
+      { value: 'WikibaseProperty', selected: true }
+    ],
+    typeText: ''
   }
 
-  componentWillReceiveProps(nextProps, nextState) {
+  componentWillReceiveProps(nextProps) {
     if (
       nextProps.currentPropClassId !== this.props.currentPropClassId ||
       nextProps.language !== this.props.language ||
@@ -37,6 +55,14 @@ class PropTable extends Component {
       this.setState({
         expandedProps: newExpandedProps
       })
+
+    // update text if new language is chosen
+    const options = this.state.typeList.filter(t => t.selected)
+    const firstOptionText = options.length !== 0 ? options[0].value : ''
+    const typeText = this.getTypeText(options.length, firstOptionText)
+    $('.multiselect-selected-text')
+      .first()
+      .text(typeText)
   }
 
   idSortMethod = (a, b, desc) => {
@@ -56,6 +82,101 @@ class PropTable extends Component {
     if (row[id] == null) values = ''
     const filterValue = filter.value.toLowerCase()
     return values.some(v => v.includes(filterValue))
+  }
+
+  typeFilterMethod = (filter, row) => {
+    if (filter.value === 'none') return false
+    const id = filter.pivotId || filter.id
+    return filter.value.split(',').includes(row[id])
+  }
+
+  handleTypeChange = (onChange, typeList = null) => {
+    const selected =
+      typeList == null
+        ? // directly select from type list
+          this.select.$multiselect.val()
+        : // select from context menu
+          typeList.filter(t => t.selected).map(t => t.value)
+    // sync state
+    this.setState({
+      typeList: this.state.typeList.map(type => ({
+        ...type,
+        selected: selected.includes(type.value)
+      }))
+    })
+    let selectedString = selected.join(',')
+    selectedString = selectedString !== '' ? selectedString : 'none'
+    onChange(selectedString)
+  }
+
+  handleMenuClick = (e, data, target) => {
+    let newTypeList = {}
+    if (data.mode === 'all') {
+      newTypeList = this.state.typeList.map(type => ({
+        ...type,
+        selected: true
+      }))
+    } else if (data.mode === 'none') {
+      newTypeList = this.state.typeList.map(type => ({
+        ...type,
+        selected: false
+      }))
+    } else if (data.mode === 'inverse') {
+      newTypeList = this.state.typeList.map(type => ({
+        ...type,
+        selected: !type.selected
+      }))
+    }
+    this.setState({ typeList: newTypeList })
+    this.select.syncData()
+    this.select.props.onChange({ typeList: newTypeList })
+  }
+
+  typeFilterComponent = ({ filter, onChange }) => (
+    <div>
+      <ContextMenuTrigger id="type-menu">
+        <Multiselect
+          ref={s => (this.select = s)}
+          buttonClass="btn-sm btn-type"
+          data={this.state.typeList}
+          onChange={({ typeList }) => this.handleTypeChange(onChange, typeList)}
+          maxHeight={150}
+          buttonText={(options, select) => {
+            const typeText = this.getTypeText(
+              options.length,
+              $(options)
+                .first()
+                .text()
+            )
+            this.setState({ typeText })
+            return typeText
+          }}
+          multiple
+        />
+      </ContextMenuTrigger>
+    </div>
+  )
+
+  getTypeText = (optionsLength, firstOptionText) => {
+    let typeText = ''
+    if (optionsLength === this.state.typeList.length) {
+      typeText = this.props.translations.type_all
+        ? this.props.translations.type_all
+        : 'All'
+    } else if (optionsLength === 1) {
+      typeText = firstOptionText
+    } else if (optionsLength === 0) {
+      typeText = this.props.translations.type_none
+        ? this.props.translations.type_none
+        : 'None'
+    } else {
+      typeText = (this.props.translations.type_num
+        ? this.props.translations.type_num
+        : '$1 types'
+      ).replace(/\$1/, optionsLength)
+    }
+
+    return typeText
   }
 
   render() {
@@ -121,7 +242,9 @@ class PropTable extends Component {
                 ? this.props.translations.type
                 : 'Type',
               accessor: 'propType',
-              width: 80
+              width: 120,
+              Filter: this.typeFilterComponent,
+              filterMethod: this.typeFilterMethod
             }
           ]}
           SubComponent={row => (
@@ -161,6 +284,12 @@ class PropTable extends Component {
                 ? this.props.translations.no_properties
                 : 'No properties found'
           }
+          getTheadFilterThProps={() => {
+            // fix multiselect display issue
+            return {
+              style: { overflow: 'inherit' }
+            }
+          }}
         />
         <ScrollToTop showUnder={100}>
           <OverlayTrigger
@@ -176,6 +305,23 @@ class PropTable extends Component {
             <MdArrowUpward size={35} className="text-muted" />
           </OverlayTrigger>
         </ScrollToTop>
+        <ContextMenu id="type-menu">
+          <MenuItem data={{ mode: 'all' }} onClick={this.handleMenuClick}>
+            {this.props.translations.select_all
+              ? this.props.translations.select_all
+              : 'Select all'}
+          </MenuItem>
+          <MenuItem data={{ mode: 'none' }} onClick={this.handleMenuClick}>
+            {this.props.translations.select_none
+              ? this.props.translations.select_none
+              : 'Select none'}
+          </MenuItem>
+          <MenuItem data={{ mode: 'inverse' }} onClick={this.handleMenuClick}>
+            {this.props.translations.select_inverse
+              ? this.props.translations.select_inverse
+              : 'Select inverse'}
+          </MenuItem>
+        </ContextMenu>
       </div>
     )
   }
