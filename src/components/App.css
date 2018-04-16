@@ -227,6 +227,21 @@ App {
   text-overflow: ellipsis;
 }
 
+.btn-default {
+  background-image: none !important;
+  border-color: rgba(0,0,0,.1) !important;
+  box-shadow: none !important;
+  -webkit-box-shadow: none !important;
+}
+
+.btn-default:active, .btn-default.active, .open > .dropdown-toggle.btn-default {
+  background-color: #fff !important;
+}
+
+.btn-default:hover, .btn-default:focus {
+  background-color: #fff !important;
+}
+
 /* react-contextmenu */
 .react-contextmenu {
   background-color: #fff;
@@ -306,4 +321,9 @@ App {
 .example-multiple-targets::after {
   content: attr(data-count);
   display: block;
+}
+
+/* fix display issue on iOS */
+input[type="text"] {
+  -webkit-appearance: none;
 }

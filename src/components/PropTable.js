@@ -134,10 +134,10 @@ class PropTable extends Component {
 
   typeFilterComponent = ({ filter, onChange }) => (
     <div>
-      <ContextMenuTrigger id="type-menu">
+      <ContextMenuTrigger id="type-menu" holdToDisplay={500}>
         <Multiselect
           ref={s => (this.select = s)}
-          buttonClass="btn-sm btn-type"
+          buttonClass="btn btn-default btn-sm btn-type"
           data={this.state.typeList}
           onChange={({ typeList }) => this.handleTypeChange(onChange, typeList)}
           maxHeight={150}

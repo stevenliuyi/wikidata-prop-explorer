@@ -40,7 +40,7 @@ class PropTree extends Component {
     decorators.Header = ({ style, node }) => {
       return (
         <div style={style.base}>
-          <ContextMenuTrigger id="context-menu">
+          <ContextMenuTrigger id="context-menu" holdToDisplay={500}>
             <div
               className="unselectable"
               style={style.title}
