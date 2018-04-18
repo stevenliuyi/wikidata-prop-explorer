@@ -8,11 +8,32 @@ import * as filters from '../utils/filter'
 import $ from 'jquery'
 import { ContextMenuTrigger, ContextMenu, MenuItem } from 'react-contextmenu'
 
+// check if an element is in the view of a scrollable container
+// reference: https://stackoverflow.com/questions/16308037/detect-when-elements-within-a-scrollable-div-are-out-of-view
+function checkInView(elem, partial) {
+  var container = $('#treebread')
+  var contHeight = container.height()
+  //var contTop = container.scrollTop()
+  //var contBottom = contTop + contHeight
+
+  var elemTop = $(elem).offset().top - container.offset().top
+  var elemBottom = elemTop + $(elem).height()
+
+  var isTotal = elemTop >= 0 && elemBottom <= contHeight
+  var isPart =
+    ((elemTop < 0 && elemBottom > 0) ||
+      (elemTop > 0 && elemTop <= container.height())) &&
+    partial
+
+  return isTotal || isPart
+}
+
 class PropTree extends Component {
   state = {
     filterText: '',
     tree: {},
-    decorators: {}
+    decorators: {},
+    scroll: false
   }
 
   componentDidUpdate() {
@@ -31,17 +52,36 @@ class PropTree extends Component {
           .last()
           .css('flex-grow', '100')
       })
+
+    setTimeout(() => {
+      if (
+        this.props.currentPropClassId &&
+        !checkInView(`#class-${this.props.currentPropClassId}`, false)
+      ) {
+        $('#treebread').animate(
+          {
+            scrollTop:
+              $(`#class-${this.props.currentPropClassId}`).offset().top -
+              $('#treebread').offset().top +
+              $('#treebread').scrollTop()
+          },
+          0
+        )
+      }
+    }, 200)
   }
 
   componentWillMount() {
     this.onToggle = this.onToggle.bind(this)
     this.onFilterChange = this.onFilterChange.bind(this)
+    this.updateTree = this.updateTree.bind(this)
 
     decorators.Header = ({ style, node }) => {
       return (
         <div style={style.base}>
-          <ContextMenuTrigger id="context-menu" holdToDisplay={500}>
+          <ContextMenuTrigger id="context-menu" holdToDisplay={1000}>
             <div
+              id={`class-${node.qid}`}
               className="unselectable"
               style={style.title}
               dangerouslySetInnerHTML={{
@@ -86,18 +126,23 @@ class PropTree extends Component {
       this.setState({ tree: nextProps.tree })
   }
 
-  onToggle(node, toggled) {
-    const { cursor } = this.state
+  // set nodes with specified ID active
+  setActiveId(node, id) {
+    node.active = node.qid === id ? true : false
+    let children = node.children
+    if (children && children.length > 0)
+      children.forEach(child => this.setActiveId(child, id))
+  }
 
-    if (cursor) {
-      cursor.active = false
-    }
+  onToggle(node, toggled) {
+    const { tree } = this.state
+    // set all nodes inactive
+    this.setActiveId(tree, null)
 
     node.active = true
     if (node.children) {
       node.toggled = toggled
     }
-    this.setState({ cursor: node })
 
     this.props.onChange(node.qid)
   }
@@ -112,6 +157,14 @@ class PropTree extends Component {
     filtered = filters.expandFilteredNodes(filtered, filterText)
     filtered = filters.highlightMatchedTexts(filtered, filterText, filterRe)
     this.setState({ tree: filtered, filterText })
+  }
+
+  // update tree when a property class is selected from the table
+  updateTree(classId) {
+    let tree = this.props.tree
+    tree = filters.expandFilteredNodes(tree, classId, filters.idMatcher, true)
+    this.setActiveId(tree, classId)
+    this.setState({ tree, scroll: true })
   }
 
   handleMenuClick(e, data, target) {
@@ -153,7 +206,10 @@ class PropTree extends Component {
             />
           </div>
         </div>
-        <div style={{ maxHeight: 'calc(100vh - 280px)', overflow: 'auto' }}>
+        <div
+          id="treebread"
+          style={{ maxHeight: 'calc(100vh - 280px)', overflow: 'auto' }}
+        >
           <Treebeard
             data={this.state.tree}
             onToggle={this.onToggle}

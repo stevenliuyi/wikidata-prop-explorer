@@ -4,6 +4,9 @@
 export const defaultMatcher = (filterText, node) => {
   return node.name.toLowerCase().indexOf(filterText.toLowerCase()) !== -1
 }
+export const idMatcher = (filterId, node) => {
+  return node.qid === filterId
+}
 
 export const findNode = (node, filter, matcher) => {
   return (
@@ -26,7 +29,12 @@ export const filterTree = (node, filter, matcher = defaultMatcher) => {
   return Object.assign({}, node, { children: filtered })
 }
 
-export const expandFilteredNodes = (node, filter, matcher = defaultMatcher) => {
+export const expandFilteredNodes = (
+  node,
+  filter,
+  matcher = defaultMatcher,
+  showUnmatched = false
+) => {
   let children = node.children
   if (!children || children.length === 0) {
     return Object.assign({}, node, { toggled: false })
@@ -37,7 +45,7 @@ export const expandFilteredNodes = (node, filter, matcher = defaultMatcher) => {
   const shouldExpand = childrenWithMatches.length > 0
   // If im going to expand, go through all the matches and see if thier children need to expand
   if (shouldExpand) {
-    children = childrenWithMatches.map(child => {
+    children = (showUnmatched ? children : childrenWithMatches).map(child => {
       return expandFilteredNodes(child, filter, matcher)
     })
   }

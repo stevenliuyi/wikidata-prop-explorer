@@ -320,7 +320,9 @@ class App extends Component {
               <Row>
                 <Col sm={4} className="tree">
                   <PropTree
+                    ref="tree"
                     tree={this.state.propTree}
+                    currentPropClassId={this.state.currentPropClassId}
                     onChange={newId =>
                       this.setState({ currentPropClassId: newId })
                     }
@@ -338,9 +340,10 @@ class App extends Component {
                     currentPropClassId={this.state.currentPropClassId}
                     toggleChecked={this.state.toggleChecked}
                     onExpand={newId => this.setState({ currentPropId: newId })}
-                    onClassSelect={newId =>
+                    onClassSelect={newId => {
                       this.setState({ currentPropClassId: newId })
-                    }
+                      this.refs.tree.updateTree(newId)
+                    }}
                     translations={this.state.translations}
                   />
                 </Col>
