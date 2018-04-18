@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
+import 'babel-polyfill'
 import App from './components/App'
 import WebFont from 'webfontloader'
 
