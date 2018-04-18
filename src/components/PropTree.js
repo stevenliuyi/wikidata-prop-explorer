@@ -16,6 +16,8 @@ function checkInView(elem, partial) {
   //var contTop = container.scrollTop()
   //var contBottom = contTop + contHeight
 
+  if (!$(elem).offset()) return true
+
   var elemTop = $(elem).offset().top - container.offset().top
   var elemBottom = elemTop + $(elem).height()
 
@@ -143,6 +145,8 @@ class PropTree extends Component {
     if (node.children) {
       node.toggled = toggled
     }
+    // make sure the root node is always expanded
+    tree.toggled = true
 
     this.props.onChange(node.qid)
   }
