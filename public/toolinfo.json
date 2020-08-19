@@ -1,9 +1,9 @@
 {
-    "name" : "prop-explorer",
-    "title" : "Wikidata Property Explorer",
-    "description" : "tool for exploring Wikidata properties",
-    "url" : "https://tools.wmflabs.org/prop-explorer",
-    "keywords" : "wikidata",
-    "author" : "Steven Liu",
-    "repository" : "https://github.com/stevenliuyi/wikidata-prop-explorer"
+    "name": "prop-explorer",
+    "title": "Wikidata Property Explorer",
+    "description": "tool for exploring Wikidata properties",
+    "url": "https://prop-explorer.toolforge.org",
+    "keywords": "wikidata",
+    "author": "Steven Liu",
+    "repository": "https://github.com/stevenliuyi/wikidata-prop-explorer"
 }
